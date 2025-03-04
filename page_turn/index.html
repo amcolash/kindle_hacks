@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kindle Flipper</title>
+
+    <style>
+      body {
+        display: flex;
+        width: 100vw;
+        height: 100vh;
+        margin: 0;
+        justify-content: center;
+        align-items: center;
+      }
+
+      button {
+        height: 100%;
+        width: 100%;
+        font-size: 5rem;
+        background: none;
+        border: 2px solid #666;
+      }
+      button:hover {
+        background: #fafafa;
+      }
+      button:active,
+      .active {
+        background: #eee;
+      }
+    </style>
+
+    <script>
+      document.addEventListener("keydown", (e) => {
+        let a;
+        switch (e.key) {
+          case "ArrowUp":
+          case "ArrowLeft":
+          case "PageUp":
+            a = "previous";
+            break;
+          case "ArrowDown":
+          case "ArrowRight":
+          case "PageDown":
+            a = "next";
+            break;
+        }
+
+        // console.log(e.key, a);
+        if (a) action(a);
+      });
+
+      lastAction = 0;
+      function action(a) {
+        if (a && Date.now() - lastAction > 700) {
+          fetch(a, { method: "POST" }).catch(console.error);
+
+          const button = document.querySelector(`#${a}`);
+          button.classList.add("active");
+          setTimeout(() => button.classList.remove("active"), 350);
+
+          lastAction = Date.now();
+        }
+      }
+
+      function updateGamepad() {
+        const gamepad = navigator.getGamepads()[0];
+        if (!gamepad) {
+          requestAnimationFrame(updateGamepad);
+          return;
+        }
+
+        const { buttons } = gamepad;
+
+        if (buttons[0].pressed || buttons[13].pressed || buttons[15].pressed || buttons[5].pressed) action("next");
+        if (buttons[1].pressed || buttons[12].pressed || buttons[14].pressed || buttons[4].pressed) action("previous");
+
+        requestAnimationFrame(updateGamepad);
+      }
+
+      requestAnimationFrame(updateGamepad);
+    </script>
+  </head>
+
+  <body>
+    <button id="previous" onclick="action('previous')">&lt;</button>
+    <button id="next" onclick="action('next')">&gt;</button>
+  </body>
+</html>
