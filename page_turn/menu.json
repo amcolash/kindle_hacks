@@ -1,0 +1,12 @@
+{
+  "items": [
+    {
+      "name": "Page Turn",
+      "priority": 0,
+      "items": [
+        { "name": "Start Page Turn", "priority": 1, "action": "python3 src/page_turn.py &> pageturn.log" },
+        { "name": "Stop Page Turn", "priority": 2, "action": "pkill -TERM python3" }
+      ]
+    }
+  ]
+}
